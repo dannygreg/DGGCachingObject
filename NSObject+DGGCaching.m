@@ -26,6 +26,74 @@
 
 #import "NSObject+DGGCaching.h"
 
+#import <objc/runtime.h>
+
+//***************************************************************************
+
+NSString *const DGGCachingObjectCachedObjectsAssociatedObjectKey = @"DGGCachingObjectCachedObjectsAssociatedObjectKey";
+NSString *DGGCachingObjectKeyChangeObservationContext = @"DGGCachingObjectKeyChangeObservationContext";
+
+//***************************************************************************
+
+@interface NSObject (DGGCaching_Private)
+
+@property (nonatomic, copy) NSMutableDictionary *dgg_cachedObjects;
+
+@end
+
+//***************************************************************************
+
+@implementation NSObject (DGGCaching_Private)
+
+- (void)setDgg_cachedObjects:(NSMutableDictionary *)cachedObjects
+{
+    objc_setAssociatedObject(self, &DGGCachingObjectKeyChangeObservationContext, cachedObjects, OBJC_ASSOCIATION_COPY);
+}
+
+- (NSMutableDictionary *)dgg_cachedObjects
+{
+    return objc_getAssociatedObject(self, &DGGCachingObjectKeyChangeObservationContext);
+}
+
+@end
+
+//***************************************************************************
+
 @implementation NSObject (DGGCaching)
+
++ (NSSet *)dgg_cachedKeys
+{
+    return [NSSet set];
+}
+
+- (void)dgg_initializeCaching
+{
+    self.dgg_cachedObjects = [NSMutableDictionary dictionary];
+    for (NSString *key in [[self class] dgg_cachedKeys]) {
+        for (NSString *dependantKey in [[self class] keyPathsForValuesAffectingValueForKey:key]) {
+            [self addObserver:self forKeyPath:dependantKey options:0 context:&DGGCachingObjectKeyChangeObservationContext];
+        }
+    }
+}
+
+- (void)dgg_cachingTeardown
+{
+    self.dgg_cachedObjects = nil;
+    for (NSString *key in [[self class] dgg_cachedKeys]) {
+        for (NSString *dependantKey in [[self class] keyPathsForValuesAffectingValueForKey:key]) {
+            [self removeObserver:self forKeyPath:dependantKey context:&DGGCachingObjectKeyChangeObservationContext];
+        }
+    }
+}
+
+- (id)dgg_cachedValueForKey:(NSString *)key
+{
+    
+}
+
+- (void)dgg_refreshCacheForKey:(NSString *)key queue:(dispatch_queue_t)queue
+{
+    
+}
 
 @end
