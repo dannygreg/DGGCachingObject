@@ -26,18 +26,21 @@
 
 #import "NSObject+DGGCaching.h"
 
+#import "NSObject+DGKVOBlocks.h"
+
 #import <objc/runtime.h>
 
 //***************************************************************************
 
 NSString *const DGGCachingObjectCachedObjectsAssociatedObjectKey = @"DGGCachingObjectCachedObjectsAssociatedObjectKey";
-NSString *DGGCachingObjectKeyChangeObservationContext = @"DGGCachingObjectKeyChangeObservationContext";
+NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCachingObjectBlockObserversAssociatedObjectKey";
 
 //***************************************************************************
 
 @interface NSObject (DGGCaching_Private)
 
 @property (nonatomic, copy) NSMutableDictionary *dgg_cachedObjects;
+@property (nonatomic, copy) NSMutableArray *dgg_blockObservers;
 
 @end
 
@@ -47,12 +50,22 @@ NSString *DGGCachingObjectKeyChangeObservationContext = @"DGGCachingObjectKeyCha
 
 - (void)setDgg_cachedObjects:(NSMutableDictionary *)cachedObjects
 {
-    objc_setAssociatedObject(self, &DGGCachingObjectKeyChangeObservationContext, cachedObjects, OBJC_ASSOCIATION_COPY);
+    objc_setAssociatedObject(self, &DGGCachingObjectCachedObjectsAssociatedObjectKey, cachedObjects, OBJC_ASSOCIATION_COPY);
 }
 
 - (NSMutableDictionary *)dgg_cachedObjects
 {
-    return objc_getAssociatedObject(self, &DGGCachingObjectKeyChangeObservationContext);
+    return objc_getAssociatedObject(self, &DGGCachingObjectCachedObjectsAssociatedObjectKey);
+}
+
+- (void)setDgg_blockObservers:(NSMutableArray *)dgg_blockObservers
+{
+    objc_setAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey, dgg_blockObservers, OBJC_ASSOCIATION_COPY);
+}
+
+- (NSMutableArray *)dgg_blockObservers
+{
+    return objc_getAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey);
 }
 
 @end
@@ -69,21 +82,31 @@ NSString *DGGCachingObjectKeyChangeObservationContext = @"DGGCachingObjectKeyCha
 - (void)dgg_initializeCaching
 {
     self.dgg_cachedObjects = [NSMutableDictionary dictionary];
+    self.dgg_blockObservers = [NSMutableArray array];
+    
     for (NSString *key in [[self class] dgg_cachedKeys]) {
         for (NSString *dependantKey in [[self class] keyPathsForValuesAffectingValueForKey:key]) {
-            [self addObserver:self forKeyPath:dependantKey options:0 context:&DGGCachingObjectKeyChangeObservationContext];
+            [self dgkvo_addObserverForKeyPath:dependantKey options:0 queue:nil usingBlock: ^ (NSDictionary *change) 
+            {
+                //if one of the dependencies reload the cache
+                for (NSString *keyToBeCached in [[self class] dgg_cachedKeys]) {
+                    if ([[[self class] keyPathsForValuesAffectingValueForKey:keyToBeCached] containsObject:dependantKey]) {
+                        [self dgg_refreshCacheForKey:keyToBeCached queue:dispatch_get_current_queue()];
+                        break; //Don't need to do it more than once, even if it is effected by multiple keys
+                    }
+                } 
+            }];
         }
     }
 }
 
 - (void)dgg_cachingTeardown
 {
+    for (id observer in self.dgg_blockObservers)
+        [self dgkvo_removeObserverWithIdentifier:observer];
+    
     self.dgg_cachedObjects = nil;
-    for (NSString *key in [[self class] dgg_cachedKeys]) {
-        for (NSString *dependantKey in [[self class] keyPathsForValuesAffectingValueForKey:key]) {
-            [self removeObserver:self forKeyPath:dependantKey context:&DGGCachingObjectKeyChangeObservationContext];
-        }
-    }
+    self.dgg_blockObservers = nil;
 }
 
 - (id)dgg_cachedValueForKey:(NSString *)key
