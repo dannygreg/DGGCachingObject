@@ -88,7 +88,13 @@ NSString *DGGCachingObjectKeyChangeObservationContext = @"DGGCachingObjectKeyCha
 
 - (id)dgg_cachedValueForKey:(NSString *)key
 {
+    id storedObject = [self.dgg_cachedObjects objectForKey:key];
+    if (storedObject == nil && [[[self class] dgg_cachedKeys] containsObject:key]) {
+        [self dgg_refreshCacheForKey:key queue:nil];
+        storedObject = [self.dgg_cachedObjects objectForKey:key];
+    }
     
+    return (storedObject ?: [self valueForKey:key]);
 }
 
 - (void)dgg_refreshCacheForKey:(NSString *)key queue:(dispatch_queue_t)queue
