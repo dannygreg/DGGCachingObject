@@ -13,6 +13,7 @@
 		3069A28214A0BFC9000A8B07 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3069A28014A0BFC9000A8B07 /* Credits.rtf */; };
 		3069A28514A0BFC9000A8B07 /* DGGAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A28414A0BFC9000A8B07 /* DGGAppDelegate.m */; };
 		3069A28814A0BFCA000A8B07 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3069A28614A0BFCA000A8B07 /* MainMenu.xib */; };
+		3069A29114A0C0F5000A8B07 /* NSObject+DGGCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,14 +22,16 @@
 		3069A27414A0BFC9000A8B07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		3069A27514A0BFC9000A8B07 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		3069A27614A0BFC9000A8B07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		3069A27914A0BFC9000A8B07 /* DGGCachingObject-Info.plist */ = {isa = PBXFileReference; path = "DGGCachingObject-Info.plist"; sourceTree = "<group>"; };
+		3069A27914A0BFC9000A8B07 /* DGGCachingObject-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DGGCachingObject-Info.plist"; sourceTree = "<group>"; };
 		3069A27B14A0BFC9000A8B07 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3069A27D14A0BFC9000A8B07 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		3069A27F14A0BFC9000A8B07 /* DGGCachingObject-Prefix.pch */ = {isa = PBXFileReference; path = "DGGCachingObject-Prefix.pch"; sourceTree = "<group>"; };
+		3069A27F14A0BFC9000A8B07 /* DGGCachingObject-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DGGCachingObject-Prefix.pch"; sourceTree = "<group>"; };
 		3069A28114A0BFC9000A8B07 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		3069A28314A0BFC9000A8B07 /* DGGAppDelegate.h */ = {isa = PBXFileReference; path = DGGAppDelegate.h; sourceTree = "<group>"; };
+		3069A28314A0BFC9000A8B07 /* DGGAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DGGAppDelegate.h; sourceTree = "<group>"; };
 		3069A28414A0BFC9000A8B07 /* DGGAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DGGAppDelegate.m; sourceTree = "<group>"; };
 		3069A28714A0BFCA000A8B07 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		3069A28F14A0C0F5000A8B07 /* NSObject+DGGCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DGGCaching.h"; sourceTree = SOURCE_ROOT; };
+		3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DGGCaching.m"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +49,8 @@
 		3069A26214A0BFC9000A8B07 = {
 			isa = PBXGroup;
 			children = (
-				3069A27714A0BFC9000A8B07 /* DGGCachingObject */,
+				3069A28E14A0C075000A8B07 /* DGGCachingObject */,
+				3069A27714A0BFC9000A8B07 /* Demo App */,
 				3069A27014A0BFC9000A8B07 /* Frameworks */,
 				3069A26E14A0BFC9000A8B07 /* Products */,
 			);
@@ -79,7 +83,7 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		3069A27714A0BFC9000A8B07 /* DGGCachingObject */ = {
+		3069A27714A0BFC9000A8B07 /* Demo App */ = {
 			isa = PBXGroup;
 			children = (
 				3069A28314A0BFC9000A8B07 /* DGGAppDelegate.h */,
@@ -87,6 +91,7 @@
 				3069A28614A0BFCA000A8B07 /* MainMenu.xib */,
 				3069A27814A0BFC9000A8B07 /* Supporting Files */,
 			);
+			name = "Demo App";
 			path = DGGCachingObject;
 			sourceTree = "<group>";
 		};
@@ -100,6 +105,15 @@
 				3069A28014A0BFC9000A8B07 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3069A28E14A0C075000A8B07 /* DGGCachingObject */ = {
+			isa = PBXGroup;
+			children = (
+				3069A28F14A0C0F5000A8B07 /* NSObject+DGGCaching.h */,
+				3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */,
+			);
+			path = DGGCachingObject;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,6 +182,7 @@
 			files = (
 				3069A27E14A0BFC9000A8B07 /* main.m in Sources */,
 				3069A28514A0BFC9000A8B07 /* DGGAppDelegate.m in Sources */,
+				3069A29114A0C0F5000A8B07 /* NSObject+DGGCaching.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
