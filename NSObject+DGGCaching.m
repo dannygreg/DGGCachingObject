@@ -99,7 +99,25 @@ NSString *DGGCachingObjectKeyChangeObservationContext = @"DGGCachingObjectKeyCha
 
 - (void)dgg_refreshCacheForKey:(NSString *)key queue:(dispatch_queue_t)queue
 {
+    if (queue == nil)
+        queue = dispatch_get_main_queue();
     
+    dispatch_async(queue, ^ {
+        if (key == nil)
+            return;
+        
+        id objectToCache = [self valueForKey:key];
+        if (objectToCache == nil) {
+            @synchronized (self.dgg_cachedObjects) {
+                [self.dgg_cachedObjects removeObjectForKey:key];
+            }
+            return;
+        }
+        
+        @synchronized (self.dgg_cachedObjects) {
+            [self.dgg_cachedObjects setObject:objectToCache forKey:key];
+        }
+    });
 }
 
 @end
