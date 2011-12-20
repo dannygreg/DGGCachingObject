@@ -1,0 +1,3 @@
+[submodule "Submodules/DGKVOBlocks"]
+	path = Submodules/DGKVOBlocks
+	url = git@github.com:dannygreg/DGKVOBlocks.git
