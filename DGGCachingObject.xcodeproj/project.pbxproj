@@ -14,6 +14,7 @@
 		3069A28514A0BFC9000A8B07 /* DGGAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A28414A0BFC9000A8B07 /* DGGAppDelegate.m */; };
 		3069A28814A0BFCA000A8B07 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3069A28614A0BFCA000A8B07 /* MainMenu.xib */; };
 		3069A29114A0C0F5000A8B07 /* NSObject+DGGCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */; };
+		3069A2BF14A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A2B214A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		3069A28714A0BFCA000A8B07 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		3069A28F14A0C0F5000A8B07 /* NSObject+DGGCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DGGCaching.h"; sourceTree = SOURCE_ROOT; };
 		3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DGGCaching.m"; sourceTree = SOURCE_ROOT; };
+		3069A2B114A0D2D2000A8B07 /* NSObject+DGKVOBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DGKVOBlocks.h"; sourceTree = "<group>"; };
+		3069A2B214A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DGKVOBlocks.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,10 +113,29 @@
 		3069A28E14A0C075000A8B07 /* DGGCachingObject */ = {
 			isa = PBXGroup;
 			children = (
+				3069A29E14A0D2D2000A8B07 /* Submodules */,
 				3069A28F14A0C0F5000A8B07 /* NSObject+DGGCaching.h */,
 				3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */,
 			);
 			path = DGGCachingObject;
+			sourceTree = "<group>";
+		};
+		3069A29E14A0D2D2000A8B07 /* Submodules */ = {
+			isa = PBXGroup;
+			children = (
+				3069A29F14A0D2D2000A8B07 /* DGKVOBlocks */,
+			);
+			name = Submodules;
+			path = ../Submodules;
+			sourceTree = "<group>";
+		};
+		3069A29F14A0D2D2000A8B07 /* DGKVOBlocks */ = {
+			isa = PBXGroup;
+			children = (
+				3069A2B114A0D2D2000A8B07 /* NSObject+DGKVOBlocks.h */,
+				3069A2B214A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m */,
+			);
+			path = DGKVOBlocks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -183,6 +205,7 @@
 				3069A27E14A0BFC9000A8B07 /* main.m in Sources */,
 				3069A28514A0BFC9000A8B07 /* DGGAppDelegate.m in Sources */,
 				3069A29114A0C0F5000A8B07 /* NSObject+DGGCaching.m in Sources */,
+				3069A2BF14A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
