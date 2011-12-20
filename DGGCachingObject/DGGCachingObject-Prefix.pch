@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'DGGCachingObject' target in the 'DGGCachingObject' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
