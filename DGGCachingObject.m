@@ -30,7 +30,17 @@
 
 #import <objc/runtime.h>
 
+@interface DGGCachingObject ()
+
+@property (nonatomic, copy, readonly) NSDictionary *customGetters;
+
+@end
+
+id DGG_ReturnCachedObjectImp(id self, SEL _cmd);
+
 @implementation DGGCachingObject
+
+@synthesize customGetters = _customGetters;
 
 + (NSSet *)cachedKeys
 {
@@ -61,6 +71,8 @@
         }
     }
     
+    _customGetters = customGetters;
+    
     NSSet *cachedKeys = [[self class] cachedKeys];
     for (NSString *keyPath in cachedKeys) {
         NSString *selectorNameToSwizzle = [keyPath copy];
@@ -68,7 +80,16 @@
             selectorNameToSwizzle = [customGetters objectForKey:keyPath];
         }
         
-        class_getMethodImplementation([self class], NSSelectorFromString(selectorNameToSwizzle));
+        IMP oldImplementation = class_getMethodImplementation([self class], NSSelectorFromString(selectorNameToSwizzle));
+        //Get return value and map it to our implementation
+        
+        IMP cachedObjectImp = imp_implementationWithBlock( ^ (id _s) {
+            return [self dgg_cachedValueForKey:keyPath];
+        });
+        
+        Method swizzleMethod = class_getInstanceMethod([self class], NSSelectorFromString(selectorNameToSwizzle));
+        method_setImplementation(swizzleMethod, cachedObjectImp);
+        
         //swizzle their getter implementation
         // Get the method for the selector
         // Set the method implementation 
@@ -88,3 +109,14 @@
 }
 
 @end
+
+id DGG_ReturnCachedObjectImp(id self, SEL _cmd) 
+{
+    NSString *key = NSStringFromSelector(_cmd);
+    NSDictionary *customGetters = [self customGetters];
+    if ([[customGetters allValues] containsObject:key]) {
+        key = [[customGetters allKeysForObject:key] lastObject];
+    }
+    
+    return [self dgg_cachedValueForKey:key];
+}

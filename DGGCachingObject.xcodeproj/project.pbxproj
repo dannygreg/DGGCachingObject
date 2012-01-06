@@ -295,6 +295,7 @@
 		3069A28C14A0BFCA000A8B07 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DGGCachingObject/DGGCachingObject-Prefix.pch";
 				INFOPLIST_FILE = "DGGCachingObject/DGGCachingObject-Info.plist";
@@ -306,6 +307,7 @@
 		3069A28D14A0BFCA000A8B07 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DGGCachingObject/DGGCachingObject-Prefix.pch";
 				INFOPLIST_FILE = "DGGCachingObject/DGGCachingObject-Info.plist";
@@ -333,6 +335,7 @@
 				3069A28D14A0BFCA000A8B07 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
