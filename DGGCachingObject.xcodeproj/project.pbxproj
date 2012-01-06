@@ -15,6 +15,7 @@
 		3069A28814A0BFCA000A8B07 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3069A28614A0BFCA000A8B07 /* MainMenu.xib */; };
 		3069A29114A0C0F5000A8B07 /* NSObject+DGGCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */; };
 		3069A2BF14A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A2B214A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m */; };
+		3069A2D114A0FD40000A8B07 /* DGGCachingObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3069A2D014A0FD40000A8B07 /* DGGCachingObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,8 @@
 		3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DGGCaching.m"; sourceTree = SOURCE_ROOT; };
 		3069A2B114A0D2D2000A8B07 /* NSObject+DGKVOBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DGKVOBlocks.h"; sourceTree = "<group>"; };
 		3069A2B214A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DGKVOBlocks.m"; sourceTree = "<group>"; };
+		3069A2CF14A0FD40000A8B07 /* DGGCachingObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DGGCachingObject.h; sourceTree = SOURCE_ROOT; };
+		3069A2D014A0FD40000A8B07 /* DGGCachingObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DGGCachingObject.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +119,8 @@
 				3069A29E14A0D2D2000A8B07 /* Submodules */,
 				3069A28F14A0C0F5000A8B07 /* NSObject+DGGCaching.h */,
 				3069A29014A0C0F5000A8B07 /* NSObject+DGGCaching.m */,
+				3069A2CF14A0FD40000A8B07 /* DGGCachingObject.h */,
+				3069A2D014A0FD40000A8B07 /* DGGCachingObject.m */,
 			);
 			path = DGGCachingObject;
 			sourceTree = "<group>";
@@ -206,6 +211,7 @@
 				3069A28514A0BFC9000A8B07 /* DGGAppDelegate.m in Sources */,
 				3069A29114A0C0F5000A8B07 /* NSObject+DGGCaching.m in Sources */,
 				3069A2BF14A0D2D2000A8B07 /* NSObject+DGKVOBlocks.m in Sources */,
+				3069A2D114A0FD40000A8B07 /* DGGCachingObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
