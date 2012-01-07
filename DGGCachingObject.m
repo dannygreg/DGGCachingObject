@@ -84,7 +84,7 @@ id DGG_ReturnCachedObjectImp(id self, SEL _cmd);
         //Get return value and map it to our implementation
         
         IMP cachedObjectImp = imp_implementationWithBlock( ^ (id _s) {
-            return [self dgg_cachedValueForKey:keyPath];
+            return [_s dgg_cachedValueForKey:keyPath];
         });
         
         Method swizzleMethod = class_getInstanceMethod([self class], NSSelectorFromString(selectorNameToSwizzle));

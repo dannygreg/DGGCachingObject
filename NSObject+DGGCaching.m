@@ -122,10 +122,10 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
 
 - (void)dgg_refreshCacheForKey:(NSString *)key queue:(dispatch_queue_t)queue
 {
-    if (queue == nil)
-        queue = dispatch_get_main_queue();
-    
-    dispatch_async(queue, ^ {
+//    if (queue == nil)
+//        queue = dispatch_get_main_queue();
+//    
+//    dispatch_sync(queue, ^ {
         if (key == nil)
             return;
         
@@ -140,7 +140,7 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
         @synchronized (self.dgg_cachedObjects) {
             [self.dgg_cachedObjects setObject:objectToCache forKey:key];
         }
-    });
+    //});
 }
 
 @end

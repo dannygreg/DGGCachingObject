@@ -10,7 +10,7 @@
 
 #import "DGGCachingObject.h"
 
-@interface DGGAppDelegate : NSObject <NSApplicationDelegate>
+@interface DGGAppDelegate : DGGCachingObject <NSApplicationDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
 
