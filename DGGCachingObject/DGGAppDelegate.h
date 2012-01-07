@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "DGGCachingObject.h"
+
 @interface DGGAppDelegate : NSObject <NSApplicationDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
