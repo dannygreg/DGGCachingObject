@@ -41,9 +41,9 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
 
 @interface NSObject (DGGCaching_Private)
 
-@property (nonatomic, copy) NSMutableDictionary *dgg_cachedObjects;
-@property (nonatomic, copy) NSMutableArray *dgg_blockObservers;
-@property (nonatomic, copy) NSMutableDictionary *dgg_cacheRefreshFunctions; //Mapped to their key
+@property (nonatomic, retain) NSMutableDictionary *dgg_cachedObjects;
+@property (nonatomic, retain) NSMutableArray *dgg_blockObservers;
+@property (nonatomic, retain) NSMutableDictionary *dgg_cacheRefreshBlocks; //Mapped to their key
 
 @end
 
@@ -71,12 +71,12 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
     return objc_getAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey);
 }
 
-- (void)setDgg_cacheRefreshFunctions:(NSMutableDictionary *)dgg_cacheRefreshFunctions
+- (void)setDgg_cacheRefreshBlocks:(NSMutableDictionary *)dgg_cacheRefreshFunctions
 {
 	objc_setAssociatedObject(self, &DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey, dgg_cacheRefreshFunctions, OBJC_ASSOCIATION_COPY);
 }
 
-- (NSMutableDictionary *)dgg_cacheRefreshFunctions
+- (NSMutableDictionary *)dgg_cacheRefreshBlocks
 {
 	return objc_getAssociatedObject(self, &DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey);
 }
@@ -104,7 +104,7 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
                 //if one of the dependencies reload the cache
                 for (NSString *keyToBeCached in [[self class] dgg_cachedKeys]) {
                     if ([[[self class] keyPathsForValuesAffectingValueForKey:keyToBeCached] containsObject:dependantKey]) {
-                        [self dgg_refreshCacheForKey:keyToBeCached queue:dispatch_get_current_queue()];
+                        [self dgg_refreshCacheForKey:keyToBeCached];
                         break; //Don't need to do it more than once, even if it is effected by multiple keys
                     }
                 } 
@@ -128,6 +128,7 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
     }
         
     NSSet *cachedKeys = [dynamicSubclass dgg_cachedKeys];
+	NSMutableDictionary *cacheRefreshBlocks = [NSMutableDictionary dictionaryWithCapacity:cachedKeys.count];
     for (NSString *keyPath in cachedKeys) {
         NSString *selectorNameToSwizzle = [keyPath copy];
         if ([[customGetters allKeys] containsObject:keyPath]) {
@@ -136,7 +137,10 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
 		
 		Method targetMethod = class_getInstanceMethod(dynamicSubclass, NSSelectorFromString(selectorNameToSwizzle));
 		IMP oldImplementation = method_getImplementation(targetMethod);
-		
+		id (^cacheRefreshBlock)(id, SEL) = ^ (id _s, SEL _c) {
+			return oldImplementation(_s, _c);
+		};
+		[cacheRefreshBlocks setObject:[cacheRefreshBlock copy] forKey:keyPath];
 		
 		char *methodReturnType = method_copyReturnType(targetMethod);
 		IMP cacheReturningIMP = nil;
@@ -226,6 +230,7 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
 
         method_setImplementation(targetMethod, cacheReturningIMP);
     }
+	self.dgg_cacheRefreshBlocks = cacheRefreshBlocks;
 
 	object_setClass(self, dynamicSubclass);
 //	struct objc_super superTarget = {self, class_getSuperclass(dynamicSubclass)};
@@ -248,34 +253,26 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
 {
     id storedObject = [self.dgg_cachedObjects objectForKey:key];
     if (storedObject == nil && [[[self class] dgg_cachedKeys] containsObject:key]) {
-        [self dgg_refreshCacheForKey:key queue:nil];
+        [self dgg_refreshCacheForKey:key];
         storedObject = [self.dgg_cachedObjects objectForKey:key];
     }
     
     return (storedObject ?: [self valueForKey:key]);
 }
 
-- (void)dgg_refreshCacheForKey:(NSString *)key queue:(dispatch_queue_t)queue
+- (void)dgg_refreshCacheForKey:(NSString *)key
 {
-//    if (queue == nil)
-//        queue = dispatch_get_main_queue();
-//    
-//    dispatch_sync(queue, ^ {
-        if (key == nil)
-            return;
-        
-        id objectToCache = [self valueForKey:key];
-        if (objectToCache == nil) {
-            @synchronized (self.dgg_cachedObjects) {
-                [self.dgg_cachedObjects removeObjectForKey:key];
-            }
-            return;
-        }
-        
-        @synchronized (self.dgg_cachedObjects) {
-            [self.dgg_cachedObjects setObject:objectToCache forKey:key];
-        }
-    //});
+	if (key == nil)
+		return;
+	
+	id (^cacheBlock)(id, SEL) = [self.dgg_cacheRefreshBlocks objectForKey:key];
+	id objectToCache = cacheBlock(self, NSSelectorFromString(key));
+	if (objectToCache == nil) {
+		[self.dgg_cachedObjects removeObjectForKey:key];
+		return;
+	}
+	
+	[self.dgg_cachedObjects setObject:objectToCache forKey:key];
 }
 
 @end

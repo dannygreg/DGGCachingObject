@@ -35,6 +35,6 @@
 - (void)dgg_cachingTeardown;
 
 - (id)dgg_cachedValueForKey:(NSString *)key;
-- (void)dgg_refreshCacheForKey:(NSString *)key queue:(dispatch_queue_t)queue; //passing nil uses the main queue
+- (void)dgg_refreshCacheForKey:(NSString *)key;
 
 @end
