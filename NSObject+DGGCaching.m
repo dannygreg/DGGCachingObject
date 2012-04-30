@@ -101,7 +101,7 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
     }
 	
 	NSString *className = [NSString stringWithFormat:@"%@_DGGCaching", [self className]];
-	Class dynamicSubclass = objc_allocateClassPair(dynamicSubclass, className.UTF8String, 0);
+	Class dynamicSubclass = objc_allocateClassPair([self class], className.UTF8String, 0);
 	
 	unsigned int propertyCount = 0;
     objc_property_t *propertyList = class_copyPropertyList(dynamicSubclass, &propertyCount);
