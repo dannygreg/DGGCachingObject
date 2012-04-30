@@ -35,6 +35,7 @@
 
 NSString *const DGGCachingObjectCachedObjectsAssociatedObjectKey = @"DGGCachingObjectCachedObjectsAssociatedObjectKey";
 NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCachingObjectBlockObserversAssociatedObjectKey";
+NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey";
 
 //***************************************************************************
 
@@ -42,6 +43,7 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
 
 @property (nonatomic, copy) NSMutableDictionary *dgg_cachedObjects;
 @property (nonatomic, copy) NSMutableArray *dgg_blockObservers;
+@property (nonatomic, copy) NSMutableDictionary *dgg_cacheRefreshFunctions; //Mapped to their key
 
 @end
 
@@ -67,6 +69,16 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
 - (NSMutableArray *)dgg_blockObservers
 {
     return objc_getAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey);
+}
+
+- (void)setDgg_cacheRefreshFunctions:(NSMutableDictionary *)dgg_cacheRefreshFunctions
+{
+	objc_setAssociatedObject(self, &DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey, dgg_cacheRefreshFunctions, OBJC_ASSOCIATION_COPY);
+}
+
+- (NSMutableDictionary *)dgg_cacheRefreshFunctions
+{
+	return objc_getAssociatedObject(self, &DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey);
 }
 
 @end
@@ -123,6 +135,9 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
         }
 		
 		Method targetMethod = class_getInstanceMethod(dynamicSubclass, NSSelectorFromString(selectorNameToSwizzle));
+		IMP oldImplementation = method_getImplementation(targetMethod);
+		
+		
 		char *methodReturnType = method_copyReturnType(targetMethod);
 		IMP cacheReturningIMP = nil;
 		switch (methodReturnType[0]) { //This is by far the worst thing about this… unfortunately I see no way around it… short of just not supporting primitive types
@@ -213,11 +228,11 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
     }
 
 	object_setClass(self, dynamicSubclass);
-	struct objc_super superTarget = {self, class_getSuperclass(dynamicSubclass)};
-	Method classMethod = class_getInstanceMethod(dynamicSubclass, @selector(class));
-	method_setImplementation(classMethod, imp_implementationWithBlock( ^ (id _s) {
-		return objc_msgSendSuper((struct objc_super *)&superTarget, @selector(class));
-	}));
+//	struct objc_super superTarget = {self, class_getSuperclass(dynamicSubclass)};
+//	Method classMethod = class_getInstanceMethod(dynamicSubclass, @selector(class));
+//	method_setImplementation(classMethod, imp_implementationWithBlock( ^ (id _s) {
+//		return objc_msgSendSuper((struct objc_super *)&superTarget, @selector(class));
+//	}));
 }
 
 - (void)dgg_cachingTeardown
