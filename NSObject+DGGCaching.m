@@ -226,7 +226,6 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
     
     self.dgg_cachedObjects = nil;
     self.dgg_blockObservers = nil;
-	self.dgg_customGetters = nil;
 }
 
 - (id)dgg_cachedValueForKey:(NSString *)key

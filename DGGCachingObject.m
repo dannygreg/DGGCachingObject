@@ -73,14 +73,3 @@ id DGG_ReturnCachedObjectImp(id self, SEL _cmd);
 }
 
 @end
-
-id DGG_ReturnCachedObjectImp(id self, SEL _cmd) 
-{
-    NSString *key = NSStringFromSelector(_cmd);
-    NSDictionary *customGetters = [self customGetters];
-    if ([[customGetters allValues] containsObject:key]) {
-        key = [[customGetters allKeysForObject:key] lastObject];
-    }
-    
-    return [self dgg_cachedValueForKey:key];
-}
