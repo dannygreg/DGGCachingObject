@@ -34,6 +34,7 @@
 
 NSString *const DGGCachingObjectCachedObjectsAssociatedObjectKey = @"DGGCachingObjectCachedObjectsAssociatedObjectKey";
 NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCachingObjectBlockObserversAssociatedObjectKey";
+NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingObjectCustomGettersAssociatedObjectKey";
 
 //***************************************************************************
 
@@ -41,6 +42,7 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
 
 @property (nonatomic, copy) NSMutableDictionary *dgg_cachedObjects;
 @property (nonatomic, copy) NSMutableArray *dgg_blockObservers;
+@property (nonatomic, copy) NSDictionary *dgg_customGetters;
 
 @end
 
@@ -66,6 +68,16 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
 - (NSMutableArray *)dgg_blockObservers
 {
     return objc_getAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey);
+}
+
+- (void)setDgg_customGetters:(NSDictionary *)dgg_customGetters
+{
+	objc_setAssociatedObject(self, &DGGCachingObjectCustomGettersAssociatedObjectKey, dgg_customGetters, OBJC_ASSOCIATION_COPY);
+}
+
+- (NSDictionary *)dgg_customGetters
+{
+	return objc_getAssociatedObject(self, &DGGCachingObjectCustomGettersAssociatedObjectKey);
 }
 
 @end
@@ -98,6 +110,47 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
             }];
         }
     }
+	
+	NSString *className = [NSString stringWithFormat:@"%@_DGGCaching", [self className]];
+	Class dynamicSubclass = objc_allocateClassPair(dynamicSubclass, className.UTF8String, 0);
+	
+	unsigned int propertyCount = 0;
+    objc_property_t *propertyList = class_copyPropertyList(dynamicSubclass, &propertyCount);
+    NSMutableDictionary *customGetters = [NSMutableDictionary dictionary];
+    for (NSUInteger idx = 0; idx < propertyCount; idx ++) {
+        NSString *propertyName = [NSString stringWithCString:property_getName(propertyList[idx]) encoding:NSUTF8StringEncoding];
+        char *getterValue = property_copyAttributeValue(propertyList[idx], "G");
+        if (getterValue != nil) {
+            [customGetters setObject:[NSString stringWithCString:getterValue encoding:NSUTF8StringEncoding] forKey:propertyName];
+        }
+    }
+    
+    self.dgg_customGetters = customGetters;
+    
+    NSSet *cachedKeys = [dynamicSubclass dgg_cachedKeys];
+    for (NSString *keyPath in cachedKeys) {
+        NSString *selectorNameToSwizzle = [keyPath copy];
+        if ([[customGetters allKeys] containsObject:keyPath]) {
+            selectorNameToSwizzle = [customGetters objectForKey:keyPath];
+        }
+		
+		Method targetMethod = class_getInstanceMethod(dynamicSubclass, NSSelectorFromString(selectorNameToSwizzle));
+		char *methodReturnType = method_copyReturnType(targetMethod);
+		
+
+        IMP cachedObjectImp = imp_implementationWithBlock( ^ (id _s) {
+            return [_s dgg_cachedValueForKey:keyPath];
+        });
+        
+        method_setImplementation(targetMethod, cachedObjectImp);
+        
+        //swizzle their getter implementation
+        // Get the method for the selector
+        // Set the method implementation 
+        // Make sure we deal with returning the correct type using method_getReturnType
+    }
+
+	object_setClass(self, dynamicSubclass);
 }
 
 - (void)dgg_cachingTeardown
@@ -107,6 +160,7 @@ NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCaching
     
     self.dgg_cachedObjects = nil;
     self.dgg_blockObservers = nil;
+	self.dgg_customGetters = nil;
 }
 
 - (id)dgg_cachedValueForKey:(NSString *)key
