@@ -29,6 +29,7 @@
 #import "NSObject+DGKVOBlocks.h"
 
 #import <objc/runtime.h>
+#import <objc/message.h>
 
 //***************************************************************************
 
@@ -136,21 +137,41 @@ NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingO
 		
 		Method targetMethod = class_getInstanceMethod(dynamicSubclass, NSSelectorFromString(selectorNameToSwizzle));
 		char *methodReturnType = method_copyReturnType(targetMethod);
-		
+		IMP cacheReturningIMP = nil;
+		switch (methodReturnType[0]) {
+			case '@':
+				cacheReturningIMP = imp_implementationWithBlock( ^ (id _s) {
+					return [_s dgg_cachedValueForKey:keyPath];
+				});
+				break;
+			case 'c':
+				cacheReturningIMP = imp_implementationWithBlock( ^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.charValue;
+				});
+				break;
+				
+			case 'i':
+				cacheReturningIMP = imp_implementationWithBlock( ^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.intValue;
+				});
+				break;
+				
+				
+			default:
+				break;
+		}
 
-        IMP cachedObjectImp = imp_implementationWithBlock( ^ (id _s) {
-            return [_s dgg_cachedValueForKey:keyPath];
-        });
-        
-        method_setImplementation(targetMethod, cachedObjectImp);
-        
-        //swizzle their getter implementation
-        // Get the method for the selector
-        // Set the method implementation 
-        // Make sure we deal with returning the correct type using method_getReturnType
+        method_setImplementation(targetMethod, cacheReturningIMP);
     }
 
 	object_setClass(self, dynamicSubclass);
+	struct objc_super superTarget = {self, class_getSuperclass(dynamicSubclass)};
+	Method classMethod = class_getInstanceMethod(dynamicSubclass, @selector(class));
+	method_setImplementation(classMethod, imp_implementationWithBlock( ^ (id _s) {
+		return objc_msgSendSuper((struct objc_super *)&superTarget, @selector(class));
+	}));
 }
 
 - (void)dgg_cachingTeardown
