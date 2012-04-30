@@ -35,7 +35,6 @@
 
 NSString *const DGGCachingObjectCachedObjectsAssociatedObjectKey = @"DGGCachingObjectCachedObjectsAssociatedObjectKey";
 NSString *const DGGCachingObjectBlockObserversAssociatedObjectKey = @"DGGCachingObjectBlockObserversAssociatedObjectKey";
-NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingObjectCustomGettersAssociatedObjectKey";
 
 //***************************************************************************
 
@@ -43,7 +42,6 @@ NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingO
 
 @property (nonatomic, copy) NSMutableDictionary *dgg_cachedObjects;
 @property (nonatomic, copy) NSMutableArray *dgg_blockObservers;
-@property (nonatomic, copy) NSDictionary *dgg_customGetters;
 
 @end
 
@@ -69,16 +67,6 @@ NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingO
 - (NSMutableArray *)dgg_blockObservers
 {
     return objc_getAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey);
-}
-
-- (void)setDgg_customGetters:(NSDictionary *)dgg_customGetters
-{
-	objc_setAssociatedObject(self, &DGGCachingObjectCustomGettersAssociatedObjectKey, dgg_customGetters, OBJC_ASSOCIATION_COPY);
-}
-
-- (NSDictionary *)dgg_customGetters
-{
-	return objc_getAssociatedObject(self, &DGGCachingObjectCustomGettersAssociatedObjectKey);
 }
 
 @end
@@ -125,9 +113,7 @@ NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingO
             [customGetters setObject:[NSString stringWithCString:getterValue encoding:NSUTF8StringEncoding] forKey:propertyName];
         }
     }
-    
-    self.dgg_customGetters = customGetters;
-    
+        
     NSSet *cachedKeys = [dynamicSubclass dgg_cachedKeys];
     for (NSString *keyPath in cachedKeys) {
         NSString *selectorNameToSwizzle = [keyPath copy];
