@@ -53,7 +53,7 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
 
 - (void)setDgg_cachedObjects:(NSMutableDictionary *)cachedObjects
 {
-    objc_setAssociatedObject(self, &DGGCachingObjectCachedObjectsAssociatedObjectKey, cachedObjects, OBJC_ASSOCIATION_COPY);
+    objc_setAssociatedObject(self, &DGGCachingObjectCachedObjectsAssociatedObjectKey, cachedObjects, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSMutableDictionary *)dgg_cachedObjects
@@ -63,7 +63,7 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
 
 - (void)setDgg_blockObservers:(NSMutableArray *)dgg_blockObservers
 {
-    objc_setAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey, dgg_blockObservers, OBJC_ASSOCIATION_COPY);
+    objc_setAssociatedObject(self, &DGGCachingObjectBlockObserversAssociatedObjectKey, dgg_blockObservers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSMutableArray *)dgg_blockObservers
@@ -73,7 +73,7 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
 
 - (void)setDgg_cacheRefreshBlocks:(NSMutableDictionary *)dgg_cacheRefreshFunctions
 {
-	objc_setAssociatedObject(self, &DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey, dgg_cacheRefreshFunctions, OBJC_ASSOCIATION_COPY);
+	objc_setAssociatedObject(self, &DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey, dgg_cacheRefreshFunctions, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSMutableDictionary *)dgg_cacheRefreshBlocks
