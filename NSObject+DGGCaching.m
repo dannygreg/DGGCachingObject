@@ -232,11 +232,12 @@ NSString *const DGGCachingObjectCacheRefreshFunctionsAssociatedObjectKey = @"DGG
     }
 	self.dgg_cacheRefreshBlocks = cacheRefreshBlocks;
 
-	object_setClass(self, dynamicSubclass);
-//	struct objc_super superTarget = {self, class_getSuperclass(dynamicSubclass)};
+//	Class futureSuper = [self class];
+//	object_setClass(self, dynamicSubclass);
+//	
 //	Method classMethod = class_getInstanceMethod(dynamicSubclass, @selector(class));
 //	method_setImplementation(classMethod, imp_implementationWithBlock( ^ (id _s) {
-//		return objc_msgSendSuper((struct objc_super *)&superTarget, @selector(class));
+//		return [futureSuper class];
 //	}));
 }
 
