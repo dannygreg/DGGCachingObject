@@ -138,7 +138,7 @@ NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingO
 		Method targetMethod = class_getInstanceMethod(dynamicSubclass, NSSelectorFromString(selectorNameToSwizzle));
 		char *methodReturnType = method_copyReturnType(targetMethod);
 		IMP cacheReturningIMP = nil;
-		switch (methodReturnType[0]) {
+		switch (methodReturnType[0]) { //This is by far the worst thing about this… unfortunately I see no way around it… short of just not supporting primitive types
 			case '@':
 				cacheReturningIMP = imp_implementationWithBlock( ^ (id _s) {
 					return [_s dgg_cachedValueForKey:keyPath];
@@ -157,8 +157,67 @@ NSString *const DGGCachingObjectCustomGettersAssociatedObjectKey = @"DGGCachingO
 					return returnedNumber.intValue;
 				});
 				break;
-				
-				
+			case 's':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.shortValue;
+				});
+				break;
+			case 'l':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.longValue;
+				});
+				break;
+			case 'q':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.longLongValue;
+				});
+				break;
+			case 'C':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.unsignedCharValue;
+				});
+				break;
+			case 'I':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.unsignedIntValue;
+				});
+				break;
+			case 'S':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.unsignedShortValue;
+				});
+				break;
+			case 'L':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.unsignedLongValue;
+				});
+				break;
+			case 'Q':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.unsignedLongLongValue;
+				});
+				break;
+			case 'f':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.floatValue;
+				});
+				break;
+			case 'd':
+				cacheReturningIMP = imp_implementationWithBlock(^ (id _s) {
+					NSNumber *returnedNumber = [_s dgg_cachedValueForKey:keyPath];
+					return returnedNumber.doubleValue;
+				});
+				break;
+				// This is somewhat of an incomplete list… we should cover structs etc. too
 			default:
 				break;
 		}
